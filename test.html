@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Perchance Chatbot</title>
+  <link rel="icon" href="data:,">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    #chat {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+    .msg {
+      max-width: 70%;
+      padding: 0.6rem 1rem;
+      margin: 0.4rem 0;
+      border-radius: 12px;
+    }
+    .user {
+      background: #28659b;
+      color: white;
+      margin-left: auto;
+    }
+    .bot {
+      background: #e0e0e0;
+      color: black;
+      margin-right: auto;
+    }
+    .input {
+      display: flex;
+      padding: 1rem;
+      background: white;
+    }
+    input {
+      flex: 1;
+      padding: 0.7rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-left: 0.5rem;
+      padding: 0.7rem 1rem;
+      background: #28659b;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div id="chat"></div>
+
+<div class="input">
+  <input id="text" placeholder="Type message..." />
+  <button onclick="send()">Send</button>
+</div>
+
+<script>
+  async function send() {
+    const input = document.getElementById("text");
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    add(msg, "user");
+    input.value = "";
+
+    const perchanceUrl = "https://perchance.org/api/generate/my-chatbot";
+
+    const proxyUrl =
+      "https://api.allorigins.win/raw?url=" +
+      encodeURIComponent(perchanceUrl);
+
+    try {
+      const res = await fetch(proxyUrl);
+      const text = await res.text();
+      add(text, "bot");
+    } catch (err) {
+      add("Error fetching response", "bot");
+      console.error(err);
+    }
+  }
+
+  function add(text, type) {
+    const div = document.createElement("div");
+    div.className = "msg " + type;
+    div.textContent = text;
+    document.getElementById("chat").appendChild(div);
+  }
+</script>
+
+</body>
+</html>
