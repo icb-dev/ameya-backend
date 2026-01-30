@@ -11,4 +11,7 @@ router.post("/", controller.createProject);
 // GET PROJECT BY SLUG
 router.get("/:slug", controller.getProject);
 
+// DELETE PROJECT BY ID
+router.delete("/:id", controller.deleteProject);
+
 module.exports = router;

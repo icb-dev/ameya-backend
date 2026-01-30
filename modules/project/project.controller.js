@@ -45,3 +45,25 @@ exports.listProjects = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+exports.deleteProject = async (req, res) => {
+  const { id } = req.params;
+  if (!id) {
+    return res.status(400).json({ error: "Project ID required" });
+  }
+  if (!UUID_REGEX.test(id)) {
+    return res.status(400).json({ error: "Invalid project ID" });
+  }
+  try {
+    await service.deleteProject(id);
+    res.status(204).send();
+  } catch (err) {
+    if (err.message === "NOT_FOUND") {
+      return res.status(404).json({ error: "Project not found" });
+    }
+    console.error(err);
+    res.status(500).json({ error: "Failed to delete project" });
+  }
+};

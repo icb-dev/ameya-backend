@@ -10,6 +10,10 @@ module.exports = {
       FROM project_sections
       WHERE project_id = ?
       ORDER BY position ASC
+    `,
+
+    DELETE_SECTIONS_BY_PROJECT_ID: `
+      DELETE FROM project_sections WHERE project_id = ?
     `
   };
   
