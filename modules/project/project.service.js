@@ -27,7 +27,11 @@ exports.getAllProjects = async () => {
   return rows;
 };
 
+
+
+ 
 /**
+ * 
  * Delete project and its sections in a transaction.
  * Deletes sections first, then the project. Throws NOT_FOUND if project doesn't exist.
  */
@@ -47,4 +51,48 @@ exports.deleteProject = async (id) => {
   } finally {
     connection.release();
   }
+};
+
+
+
+exports.getProjectById = async (id) => {
+  const [rows] = await db.query(
+    "SELECT * FROM projects WHERE id = ?",
+    [id]
+  );
+  return rows[0];
+};
+
+/**
+ * Update project by id. Merges req.body with existing project so partial updates work.
+ * Returns the updated project row count (1) or null if project not found.
+ */
+exports.updateProject = async (id, data) => {
+  const existing = await exports.getProjectById(id);
+  if (!existing) return null;
+
+  const {
+    slug,
+    project_name,
+    sector,
+    city,
+    project_type,
+    project_logo,
+    project_thumbnail,
+    status
+  } = { ...existing, ...data };
+
+  const [result] = await db.query(SQL.UPDATE_PROJECT, [
+    slug,
+    project_name,
+    sector,
+    city,
+    project_type,
+    project_logo ?? null,
+    project_thumbnail ?? null,
+    status,
+    id
+  ]);
+
+  return result.affectedRows > 0 ? result : null;
 };

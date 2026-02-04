@@ -15,8 +15,17 @@ module.exports = {
       ORDER BY created_at DESC
     `,
 
+
+    
     DELETE_PROJECT_BY_ID: `
       DELETE FROM projects WHERE id = ?
+    `,
+
+    UPDATE_PROJECT: `
+      UPDATE projects
+      SET slug = ?, project_name = ?, sector = ?, city = ?, project_type = ?,
+          project_logo = ?, project_thumbnail = ?, status = ?
+      WHERE id = ?
     `
   };
   // done

@@ -46,18 +46,20 @@ exports.listProjects = async (req, res) => {
   }
 };
 
+ 
+
+
+
+
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 exports.deleteProject = async (req, res) => {
-  const { id } = req.params;
-  if (!id) {
-    return res.status(400).json({ error: "Project ID required" });
-  }
-  if (!UUID_REGEX.test(id)) {
-    return res.status(400).json({ error: "Invalid project ID" });
+  const { slug } = req.params;
+  if (!slug) {
+    return res.status(400).json({ error: "Project slug required" });
   }
   try {
-    await service.deleteProject(id);
+    await service.deleteProject(slug);
     res.status(204).send();
   } catch (err) {
     if (err.message === "NOT_FOUND") {
@@ -65,5 +67,28 @@ exports.deleteProject = async (req, res) => {
     }
     console.error(err);
     res.status(500).json({ error: "Failed to delete project" });
+  }
+};
+
+
+
+exports.updateProject = async (req, res) => {
+  const { id } = req.params;
+
+  if (!UUID_REGEX.test(id)) {
+    return res.status(400).json({ error: "Invalid project ID" });
+  }
+
+  try {
+    const updated = await service.updateProject(id, req.body);
+
+    if (!updated) {
+      return res.status(404).json({ error: "Project not found or no fields updated" });
+    }
+
+    res.json({ message: "Project updated successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to update project" });
   }
 };
